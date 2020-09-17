@@ -520,6 +520,15 @@ define docker::run(
         $startstop_template = undef
         $hasstatus          = true
       }
+      'openrc': {
+        $initscript         = "/etc/init.d/${service_prefix}${sanitised_title}"
+        $init_template      = 'docker/etc/init.d/docker-run.openrc.erb'
+        $mode               = '0750'
+        $startscript        = undef
+        $stopscript         = undef
+        $startstop_template = undef
+        $hasstatus          = true
+      }
       default: {
         if $facts['os']['family'] != 'windows' {
           fail(translate('Docker needs a Debian or RedHat based system.'))
