@@ -1,0 +1,41 @@
+#!/sbin/openrc-run
+
+depend() {
+    use logger dns docker
+    need mysql
+}
+
+docker="/usr/bin/<%= $docker_command %>"
+prog="<%= $service_prefix %><%= $sanitised_title %>"
+
+start() {
+	ebegin "Starting ${prog}"
+
+    [ -x $docker ] || exit 5
+
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= $sanitised_title %> 2>/dev/null)" ]; then
+       eend 7 "Container <%= $sanitised_title %> is still running.\n"
+    fi
+    # uff
+    <%= $docker_run_inline_start %>
+
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping ${prog}"
+
+    <%= $docker_run_inline_stop %>
+
+	eend $?
+}
+
+status() {
+    if [ "true" = "$($docker inspect --format='{{.State.Running}}' <%= $sanitised_title %> 2> /dev/null)" ]; then
+		mark_service_started "${SVCNAME}"
+		eend 0
+	else
+		mark_service_stopped "${SVCNAME}"
+		eend 3
+	fi
+}

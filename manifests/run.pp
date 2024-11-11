@@ -21,9 +21,9 @@
 # puppet help.
 #
 # @param verify_digest
-#   (optional) Make sure, that the image has not modified. Compares the digest 
+#   (optional) Make sure, that the image has not modified. Compares the digest
 #   checksum before starting the docker image.
-#   To get the digest of an image, run the following command: 
+#   To get the digest of an image, run the following command:
 #     docker image inspect <<image>> --format='{{index .RepoDigests 0}}
 #
 # @param service_prefix
@@ -525,6 +525,15 @@ define docker::run (
         $startstop_template = undef
         $hasstatus          = true
       }
+      'openrc': {
+        $initscript         = "/etc/init.d/${service_prefix}${sanitised_title}"
+        $init_template      = 'docker/etc/init.d/docker-run.openrc.epp'
+        $mode               = '0750'
+        $startscript        = undef
+        $stopscript         = undef
+        $startstop_template = undef
+        $hasstatus          = true
+      }
       default: {
         if $facts['os']['family'] != 'windows' {
           fail('Docker needs a Debian or RedHat based system.')
@@ -634,6 +643,17 @@ define docker::run (
           'service_name'              => $service_name,
         }
       } elsif $service_provider_real == 'upstart' {
+        $init_template_parameters = {
+          'sanitised_after_array'   => $sanitised_after_array,
+          'service_prefix'          => $service_prefix,
+          'sanitised_depends_array' => $sanitised_depends_array,
+          'depend_services_array'   => $depend_services_array,
+          'docker_command'          => $docker_command,
+          'sanitised_title'         => $sanitised_title,
+          'docker_run_inline_start' => $docker_run_inline_start,
+          'docker_run_inline_stop'  => $docker_run_inline_stop,
+        }
+      } elsif $service_provider_real == 'openrc' {
         $init_template_parameters = {
           'sanitised_after_array'   => $sanitised_after_array,
           'service_prefix'          => $service_prefix,
