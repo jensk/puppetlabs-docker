@@ -2,7 +2,6 @@
 
 depend() {
     use logger dns docker
-    need mysql
 }
 
 docker="/usr/bin/<%= $docker_command %>"
