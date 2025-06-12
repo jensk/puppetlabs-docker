@@ -386,7 +386,7 @@ define docker::run (
   if $restart {
     if $ensure == 'absent' {
       exec { "stop ${title} with docker":
-        command     => "${docker_command} stop --time=${stop_wait_time} ${sanitised_title}",
+        command     => "${docker_command} stop --timeout=${stop_wait_time} ${sanitised_title}",
         onlyif      => "${docker_command} inspect ${sanitised_title}",
         environment => $exec_environment,
         path        => $exec_path,
@@ -433,7 +433,7 @@ define docker::run (
 
         if $running == false {
           exec { "stop ${title} with docker":
-            command     => "${docker_command} stop --time=${stop_wait_time} ${sanitised_title}",
+            command     => "${docker_command} stop --timeout=${stop_wait_time} ${sanitised_title}",
             onlyif      => $container_running_check,
             environment => $exec_environment,
             path        => $exec_path,
@@ -555,7 +555,7 @@ define docker::run (
     if $ensure == 'absent' {
       if $facts['os']['family'] == 'windows' {
         exec { "stop container ${service_prefix}${sanitised_title}":
-          command     => "${docker_command} stop --time=${stop_wait_time} ${sanitised_title}",
+          command     => "${docker_command} stop --timeout=${stop_wait_time} ${sanitised_title}",
           onlyif      => "${docker_command} inspect ${sanitised_title}",
           environment => $exec_environment,
           path        => $exec_path,
