@@ -1,9 +1,9 @@
 <% if $before_stop { -%>
     <%= $before_stop %>
 <% } -%>
-/usr/bin/<%= $docker_command %> stop --timeout=<%= $stop_wait_time %> <%= $sanitised_title %>
+/usr/bin/<%= $docker_command %> stop --timeout=<%= $stop_wait_time %> <%= $sanitised_title %> 2>&1 | logger -t "$prog"
 <% if $remove_container_on_stop { -%>
-    /usr/bin/<%= $docker_command %> rm <% if $remove_volume_on_stop { %>-v<% } %> <%= $sanitised_title %>
+    /usr/bin/<%= $docker_command %> rm <% if $remove_volume_on_stop { %>-v<% } %> <%= $sanitised_title %> 2>&1 | logger -t "$prog"
 <% } -%>
 <% if $after_stop { -%>
     <%= $after_stop %>
